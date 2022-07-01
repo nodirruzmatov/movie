@@ -6,42 +6,11 @@ const elMovieForm = document.querySelector(".movie__form");
 const elMovieSelect = document.querySelector(".movie__select");
 const elMarkList = document.querySelector(".mark-list");
 
-elResult.textContent = films.length;
-
-const markedFilms = [];
-
-//  todo: place all genres into  select elements
-
-// const nimad = films.map(film => film.genres).
-
-const renderGenres = (arr) => {
-  const allGenres = [];
-
-  arr.forEach((film) => {
-    film.genres.forEach((genre) => {
-      if (!allGenres.includes(genre)) {
-        allGenres.push(genre);
-      }
-    });
-  });
-
-  allGenres.forEach((genre) => {
-    const genreOption = document.createElement("option");
-
-    genreOption.textContent = genre;
-    genreOption.value = genre;
-
-    elMovieSelect.appendChild(genreOption);
-  });
-};
-
-renderGenres(films);
-
 // todo: place all films into movies list
 const renderMovies = function (filmsArr, htmlElement) {
   filmsArr.forEach((movie) => {
     movie.isMark = false;
-    //CREATE ELEMENT
+    //! CREATE ELEMENT -------------------------------------
     const newLi = document.createElement("li");
     const newImg = document.createElement("img");
     const newDiv = document.createElement("div");
@@ -51,7 +20,7 @@ const renderMovies = function (filmsArr, htmlElement) {
     const newButton = document.createElement("a");
     const newMarkBtn = document.createElement("button");
 
-    //SET ATTTIBUTE
+    //! SET ATTTIBUTE ----------------------------------
     newLi.setAttribute("class", "card mb-3");
     newLi.style.width = "18rem";
     newImg.classList.add("card-img-top");
@@ -83,7 +52,7 @@ const renderMovies = function (filmsArr, htmlElement) {
       genresList.appendChild(newGenre);
     });
 
-    //APPEND
+    //! APPEND --------------------------------------------------------
     htmlElement.appendChild(newLi);
     newLi.appendChild(newImg);
     newLi.appendChild(newDiv);
@@ -98,8 +67,37 @@ const renderMovies = function (filmsArr, htmlElement) {
 
 renderMovies(films, elMovieList);
 
-// todo: add addEventListener for filter films
+const localFilms = JSON.parse(window.localStorage.getItem("films"));
 
+console.log(localFilms);
+
+elResult.textContent = films.length;
+
+//  todo: place all genres into  select elements
+const renderGenres = (arr) => {
+  const allGenres = [];
+
+  arr.forEach((film) => {
+    film.genres.forEach((genre) => {
+      if (!allGenres.includes(genre)) {
+        allGenres.push(genre);
+      }
+    });
+  });
+
+  allGenres.forEach((genre) => {
+    const genreOption = document.createElement("option");
+
+    genreOption.textContent = genre;
+    genreOption.value = genre;
+
+    elMovieSelect.appendChild(genreOption);
+  });
+};
+
+renderGenres(localFilms || films);
+
+// todo: add addEventListener for filter films
 elMovieForm.addEventListener("submit", function (ent) {
   ent.preventDefault();
 
@@ -120,8 +118,7 @@ elMovieForm.addEventListener("submit", function (ent) {
   renderMovies(filteredFilms, elMovieList);
 });
 
-// !  --------------
-
+// todo: place marked movies into elMarkList
 const renderMark = (marked, element) => {
   marked.forEach((movie) => {
     const newMarkLi = document.createElement("li");
@@ -139,14 +136,13 @@ const renderMark = (marked, element) => {
       elMarkList.appendChild(newMarkLi);
       newMarkLi.appendChild(newMarkName);
       newMarkLi.appendChild(newRemoveBtn);
-    } else {
     }
   });
 };
 
-renderMark(films, elMarkList);
+renderMark(localFilms || films, elMarkList);
 
-// todo:
+// todo: mark movies
 elMovieList.addEventListener("click", (ent) => {
   elMarkList.innerHTML = null;
 
@@ -158,10 +154,12 @@ elMovieList.addEventListener("click", (ent) => {
     }
   });
 
+  window.localStorage.setItem("films", JSON.stringify(films));
+
   renderMark(films, elMarkList);
 });
 
-// todo:
+// todo :remove marked movies
 elMarkList.addEventListener("click", (ent) => {
   elMarkList.innerHTML = null;
 
@@ -172,6 +170,8 @@ elMarkList.addEventListener("click", (ent) => {
       movie.isMark = !movie.isMark;
     }
   });
+
+  window.localStorage.setItem("films", JSON.stringify(films));
 
   renderMark(films, elMarkList);
 });
