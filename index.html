@@ -13,21 +13,17 @@
 
 <body>
 
-  <div class="modal">
-
-
-
-  </div>
-
   <header class="mt-3">
     <div class="container">
-      <h1 class="text-white bg-info p-3">Movies Catalog</h1>
+      <h1 class="text-white bg-secondary p-3">Movies Catalog</h1>
     </div>
   </header>
 
-  <main class="movie container d-flex">
+  <main class="movie container d-flex position-relative">
 
-    <aside class="bookmark container">
+
+
+    <aside class="bookmark container w-25">
 
       <h2 class="heading ">Bookmark</h2>
 
@@ -38,7 +34,7 @@
     </aside>
 
     <div class="container">
-      <p class="movie__result alert alert-info">Search Results: <span class="movie__result-num"></span></p>
+      <p class="movie__result alert alert-secondary">Search Results: <span class="movie__result-num"></span></p>
 
       <form class="movie__form">
         <select class="movie__select" name="movies">
@@ -49,6 +45,10 @@
 
       <ul class="movie__list d-flex flex-wrap justify-content-between m-0 p-0">
       </ul>
+
+      <div class="modaljon"></div>
+
+
     </div>
   </main>
 

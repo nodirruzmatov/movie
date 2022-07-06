@@ -5,11 +5,13 @@ const elResult = document.querySelector(".movie__result-num");
 const elMovieForm = document.querySelector(".movie__form");
 const elMovieSelect = document.querySelector(".movie__select");
 const elMarkList = document.querySelector(".mark-list");
+const elModal = document.querySelector(".modaljon");
 
 // todo: place all films into movies list
 const renderMovies = function (filmsArr, htmlElement) {
   filmsArr.forEach((movie) => {
     movie.isMark = false;
+
     //! CREATE ELEMENT -------------------------------------
     const newLi = document.createElement("li");
     const newImg = document.createElement("img");
@@ -19,6 +21,7 @@ const renderMovies = function (filmsArr, htmlElement) {
     const newYear = document.createElement("p");
     const newButton = document.createElement("a");
     const newMarkBtn = document.createElement("button");
+    const newInfoBtn = document.createElement("button");
 
     //! SET ATTTIBUTE ----------------------------------
     newLi.setAttribute("class", "card mb-3");
@@ -35,12 +38,16 @@ const renderMovies = function (filmsArr, htmlElement) {
       `https://www.youtube.com/watch?v=${movie.youtubeId}`
     );
     newMarkBtn.classList.add("mark-btn");
+    newInfoBtn.setAttribute("class", "btn btn-primary  ms-2");
 
     newMarkBtn.dataset.markBtn = movie.id;
+    newInfoBtn.dataset.infoBtn = movie.id;
+
     newTitle.textContent = movie.title;
     newYear.textContent = movie.overview;
     newButton.textContent = "Watch Trailer";
     newMarkBtn.textContent = "Mark";
+    newInfoBtn.textContent = "Info";
 
     const genresList = document.createElement("ul");
 
@@ -58,18 +65,17 @@ const renderMovies = function (filmsArr, htmlElement) {
     newLi.appendChild(newDiv);
     newDiv.appendChild(newTitle);
     newDiv.appendChild(genresList);
-    newDiv.appendChild(newLanguage);
-    newDiv.appendChild(newYear);
+    // newDiv.appendChild(newLanguage);
+    // newDiv.appendChild(newYear);
     newDiv.appendChild(newButton);
     newDiv.appendChild(newMarkBtn);
+    newDiv.appendChild(newInfoBtn);
   });
 };
 
 renderMovies(films, elMovieList);
 
 const localFilms = JSON.parse(window.localStorage.getItem("films"));
-
-console.log(localFilms);
 
 elResult.textContent = films.length;
 
@@ -142,6 +148,23 @@ const renderMark = (marked, element) => {
 
 renderMark(localFilms || films, elMarkList);
 
+// todo :remove marked movies
+elMarkList.addEventListener("click", (ent) => {
+  elMarkList.innerHTML = null;
+
+  const removeBtnId = ent.target.dataset.removeBtnId * 1;
+
+  films.forEach((movie) => {
+    if (movie.id * 1 === removeBtnId) {
+      movie.isMark = !movie.isMark;
+    }
+  });
+
+  window.localStorage.setItem("films", JSON.stringify(films));
+
+  renderMark(films, elMarkList);
+});
+
 // todo: mark movies
 elMovieList.addEventListener("click", (ent) => {
   elMarkList.innerHTML = null;
@@ -159,19 +182,32 @@ elMovieList.addEventListener("click", (ent) => {
   renderMark(films, elMarkList);
 });
 
-// todo :remove marked movies
-elMarkList.addEventListener("click", (ent) => {
-  elMarkList.innerHTML = null;
+// !-------------------
+elMovieList.addEventListener("click", (ent) => {
+  const infoModalBtn = ent.target.dataset.infoBtn * 1;
 
-  const removeBtnId = ent.target.dataset.removeBtnId * 1;
+  films.forEach((film) => {
+    elModal.classList.toggle("hidde");
 
-  films.forEach((movie) => {
-    if (movie.id * 1 === removeBtnId) {
-      movie.isMark = !movie.isMark;
+    if (film.id * 1 === infoModalBtn) {
+      const newModalDiv = document.querySelector("div");
+      const newModalH = document.querySelector("h2");
+      const newModalP = document.querySelector("p");
+
+      newModalDiv.classList.add("modalcha");
+      newModalH.classList.add("modal-headeing");
+      newModalP.classList.add("modal-desc");
+
+      newModalH.textContent = film.title;
+      newModalP.textContent = film.overview;
+
+      elModal.appendChild(newModalDiv);
+      newModalDiv.appendChild(newModalH);
+      newModalDiv.appendChild(newModalP);
     }
   });
+});
 
-  window.localStorage.setItem("films", JSON.stringify(films));
-
-  renderMark(films, elMarkList);
+elModal.addEventListener("click", (ent) => {
+  elModal.classList.remove("hidde");
 });
